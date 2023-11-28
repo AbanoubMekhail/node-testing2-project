@@ -30,6 +30,24 @@ describe("jokes model functions", ()=> {
             await Joke.createJoke(joke1)
             jokes = await db('jokes')
             expect(jokes).toHaveLength(1)
+
+            await Joke.createJoke(joke2)
+            jokes = await db('jokes')
+            expect(jokes).toHaveLength(2)
+        })
+        it("inserted joke and punshline", async ()=>{
+            const joke = await Joke.createJoke(joke1)
+            expect(joke).toMatchObject({joke_id:1,...joke})
+        })
+    })
+    describe("deletes joke", () => {
+        it("removes a joke from db", async () => {
+            const [joke_id] = await db("jokes").insert(joke1)
+            let joke = await db("jokes").where({joke_id}).first()
+            expect(joke).toBeTruthy()
+            await request(server).delete("/jokes/"+ joke_id)
+            joke = await db("jokes").where({joke_id}).first()
+            expect(joke).toBefalsy()
         })
     })
 } )
